@@ -1,10 +1,12 @@
+ARG SAGE_CUDA_ARCH_LIST=8.6
 FROM runpod/comfyui:cuda12.8 AS sage-builder
 
+ARG SAGE_CUDA_ARCH_LIST
 ARG SAGEATTENTION_COMMIT=d1a57a546c3d395b1ffcbeecc66d81db76f3b4b5
 
 ENV CUDA_HOME=/usr/local/cuda \
-    TORCH_CUDA_ARCH_LIST="8.6;8.9;12.0" \
-    MAX_JOBS=4
+    TORCH_CUDA_ARCH_LIST=${SAGE_CUDA_ARCH_LIST} \
+    MAX_JOBS=1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential git ninja-build \
@@ -18,6 +20,10 @@ RUN git clone https://github.com/thu-ml/SageAttention.git /tmp/SageAttention \
       --wheel-dir /tmp/sage-wheels /tmp/SageAttention
 
 FROM runpod/comfyui:cuda12.8
+
+ARG SAGE_CUDA_ARCH_LIST
+
+ENV SAGE_SUPPORTED_CC=${SAGE_CUDA_ARCH_LIST}
 
 COPY --from=sage-builder /tmp/sage-wheels /tmp/sage-wheels
 

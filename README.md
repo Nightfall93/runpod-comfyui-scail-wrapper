@@ -20,9 +20,10 @@ Use the current stable image:
 
 `YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:latest`
 
-The SageAttention 2 test image is published separately and supports RTX 30-,
-40-, and 50-series GPUs:
+SageAttention 2 images are published separately for each GPU generation:
 
-`YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:sage2`
+- RTX 30-series: `YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:sage2-ampere`
+- RTX 40-series: `YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:sage2-ada`
+- RTX 50-series: `YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:sage2-blackwell`
 
 Leave Container start command empty.

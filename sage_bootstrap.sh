@@ -54,14 +54,11 @@ fi
 
 echo "Detected GPU compute capability: $GPU_CC"
 
-case "$GPU_CC" in
-  8.6|8.9|12.0) ;;
-  *)
-    echo "GPU compute capability $GPU_CC is unsupported; skipping SageAttention."
-    disable_sage_attention
-    exit 0
-    ;;
-esac
+if [ "$GPU_CC" != "${SAGE_SUPPORTED_CC:-}" ]; then
+  echo "Baked SageAttention supports ${SAGE_SUPPORTED_CC:-unknown}, not $GPU_CC; skipping it."
+  disable_sage_attention
+  exit 0
+fi
 
 if "$PYTHON_BIN" -c "import sageattention" >/dev/null 2>&1; then
   enable_sage_attention

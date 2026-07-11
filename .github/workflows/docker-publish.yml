@@ -8,6 +8,16 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - tag: sage2-ampere
+            cuda_arch: "8.6"
+          - tag: sage2-ada
+            cuda_arch: "8.9"
+          - tag: sage2-blackwell
+            cuda_arch: "12.0"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,4 +36,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper:sage2
+          build-args: |
+            SAGE_CUDA_ARCH_LIST=${{ matrix.cuda_arch }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper:${{ matrix.tag }}
