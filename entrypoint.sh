@@ -1,17 +1,20 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 echo "=== Custom SCAIL/ComfyUI wrapper started ==="
 
-if [ -n "$SETUP_SCRIPT_URL" ]; then
-  echo "Downloading setup script from: $SETUP_SCRIPT_URL"
-  curl -L --fail -o /tmp/scail2video_setup.sh "$SETUP_SCRIPT_URL"
+SCRIPT_URL="${SETUP_SCRIPT_URL:-${SCAIL_SETUP_SCRIPT_URL:-}}"
+
+if [ -n "$SCRIPT_URL" ]; then
+  echo "Downloading setup script from: $SCRIPT_URL"
+  curl -L --fail --retry 5 --retry-delay 5 \
+    -o /tmp/scail2video_setup.sh "$SCRIPT_URL"
   chmod +x /tmp/scail2video_setup.sh
 
-  echo "Running setup script..."
+  echo "Running Gist setup script..."
   bash /tmp/scail2video_setup.sh
 else
-  echo "No SETUP_SCRIPT_URL set, skipping external setup script."
+  echo "No setup script URL set, skipping Gist setup."
 fi
 
 echo "Running SageAttention bootstrap..."
