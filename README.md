@@ -16,8 +16,13 @@ Set these in your RunPod template:
 
 ## RunPod template
 
-Use the built image:
+Use the current stable image:
 
 `YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:latest`
+
+The SageAttention 2 test image is published separately and supports RTX 30-,
+40-, and 50-series GPUs:
+
+`YOUR_DOCKERHUB_USERNAME/comfyui-scail-wrapper:sage2`
 
 Leave Container start command empty.

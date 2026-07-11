@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper:sage2

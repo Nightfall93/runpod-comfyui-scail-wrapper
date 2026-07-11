@@ -3,11 +3,6 @@ set -euo pipefail
 
 echo "=== SageAttention bootstrap starting ==="
 
-if [ "${ENABLE_SAGE_ATTENTION:-1}" != "1" ]; then
-  echo "ENABLE_SAGE_ATTENTION is disabled, skipping SageAttention."
-  exit 0
-fi
-
 COMFY="/workspace/runpod-slim/ComfyUI"
 PYTHON_BIN="$COMFY/.venv-cu128/bin/python"
 ARGS_FILE="/workspace/runpod-slim/comfyui_args.txt"
@@ -32,6 +27,12 @@ enable_sage_attention() {
   fi
 }
 
+if [ "${ENABLE_SAGE_ATTENTION:-1}" != "1" ]; then
+  echo "ENABLE_SAGE_ATTENTION is disabled, skipping SageAttention."
+  disable_sage_attention
+  exit 0
+fi
+
 if [ ! -x "$PYTHON_BIN" ]; then
   echo "ComfyUI venv not found; skipping SageAttention."
   disable_sage_attention
@@ -54,7 +55,7 @@ fi
 echo "Detected GPU compute capability: $GPU_CC"
 
 case "$GPU_CC" in
-  8.*|9.*|12.0) ;;
+  8.6|8.9|12.0) ;;
   *)
     echo "GPU compute capability $GPU_CC is unsupported; skipping SageAttention."
     disable_sage_attention
@@ -62,28 +63,11 @@ case "$GPU_CC" in
     ;;
 esac
 
-if ! "$PYTHON_BIN" -m pip install -U packaging psutil ninja triton; then
-  echo "Could not install SageAttention dependencies; continuing without it."
-  disable_sage_attention
-  exit 0
-fi
-
-if "$PYTHON_BIN" -c "import sageattention" >/dev/null 2>&1; then
-  echo "SageAttention already installed."
-else
-  echo "Installing SageAttention..."
-  if ! "$PYTHON_BIN" -m pip install sageattention==2.2.0 --no-build-isolation; then
-    echo "SageAttention installation failed; continuing without it."
-    disable_sage_attention
-    exit 0
-  fi
-fi
-
 if "$PYTHON_BIN" -c "import sageattention" >/dev/null 2>&1; then
   enable_sage_attention
-  echo "SageAttention enabled for ComfyUI."
+  echo "Baked SageAttention is available and enabled for ComfyUI."
 else
-  echo "SageAttention cannot be imported; continuing without it."
+  echo "Baked SageAttention cannot be imported; continuing without it."
   disable_sage_attention
 fi
 
