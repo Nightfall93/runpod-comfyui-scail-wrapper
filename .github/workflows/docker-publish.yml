@@ -4,9 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
 
 jobs:
   build-and-push:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -39,3 +41,27 @@ jobs:
           build-args: |
             SAGE_CUDA_ARCH_LIST=${{ matrix.cuda_arch }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper:${{ matrix.tag }}
+
+  publish-version-tags:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tag: [ sage2-ampere, sage2-ada, sage2-blackwell ]
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Publish immutable version tag
+        env:
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/comfyui-scail-wrapper
+          VARIANT: ${{ matrix.tag }}
+          VERSION: ${{ github.ref_name }}
+        run: docker buildx imagetools create --tag "$IMAGE:$VARIANT-$VERSION" "$IMAGE:$VARIANT"

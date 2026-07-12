@@ -1,7 +1,7 @@
 ARG SAGE_CUDA_ARCH_LIST=8.6
 FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 AS cuda-devel
 
-FROM runpod/comfyui:cuda12.8 AS sage-builder
+FROM runpod/comfyui:cuda12.8@sha256:498e3c4ac7ef5071214badb1681d82ab3a8f922b1055742ae692fa02cd3b59ff AS sage-builder
 
 ARG SAGE_CUDA_ARCH_LIST
 ARG SAGEATTENTION_COMMIT=d1a57a546c3d395b1ffcbeecc66d81db76f3b4b5
@@ -25,7 +25,7 @@ RUN git clone https://github.com/thu-ml/SageAttention.git /tmp/SageAttention \
     && python3 -m pip wheel --no-deps --no-build-isolation \
       --wheel-dir /tmp/sage-wheels /tmp/SageAttention
 
-FROM runpod/comfyui:cuda12.8
+FROM runpod/comfyui:cuda12.8@sha256:498e3c4ac7ef5071214badb1681d82ab3a8f922b1055742ae692fa02cd3b59ff
 
 ARG SAGE_CUDA_ARCH_LIST
 
