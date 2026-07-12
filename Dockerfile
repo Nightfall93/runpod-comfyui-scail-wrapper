@@ -28,6 +28,7 @@ RUN git clone https://github.com/thu-ml/SageAttention.git /tmp/SageAttention \
 FROM runpod/comfyui:cuda12.8@sha256:498e3c4ac7ef5071214badb1681d82ab3a8f922b1055742ae692fa02cd3b59ff
 
 ARG SAGE_CUDA_ARCH_LIST
+ARG PIXAROMA_COMMIT=2b3f90645906b556e0bb466ffd8005ca33a06dd0
 
 ENV SAGE_SUPPORTED_CC=${SAGE_CUDA_ARCH_LIST}
 
@@ -35,6 +36,15 @@ COPY --from=sage-builder /tmp/sage-wheels /tmp/sage-wheels
 
 RUN python3 -m pip install --no-deps /tmp/sage-wheels/sageattention-*.whl \
     && rm -rf /tmp/sage-wheels
+
+RUN git init /opt/comfyui-baked/custom_nodes/ComfyUI-Pixaroma \
+    && git -C /opt/comfyui-baked/custom_nodes/ComfyUI-Pixaroma remote add origin \
+      https://github.com/pixaroma/ComfyUI-Pixaroma.git \
+    && git -C /opt/comfyui-baked/custom_nodes/ComfyUI-Pixaroma fetch \
+      --depth 1 origin "$PIXAROMA_COMMIT" \
+    && git -C /opt/comfyui-baked/custom_nodes/ComfyUI-Pixaroma \
+      checkout --detach FETCH_HEAD \
+    && rm -rf /opt/comfyui-baked/custom_nodes/ComfyUI-Pixaroma/.git
 
 COPY entrypoint.sh /entrypoint.sh
 COPY sage_bootstrap.sh /sage_bootstrap.sh

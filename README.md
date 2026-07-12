@@ -4,6 +4,9 @@ This is a tiny wrapper image based on `runpod/comfyui:cuda12.8`.
 
 It replaces the container ENTRYPOINT so a setup script can run before the original RunPod ComfyUI `/start.sh`.
 
+The SageAttention images also bake the tested Pixaroma custom node at commit
+`2b3f90645906b556e0bb466ffd8005ca33a06dd0`.
+
 ## RunPod environment variables
 
 Set these in your RunPod template:

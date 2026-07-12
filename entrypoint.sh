@@ -7,7 +7,8 @@ SCRIPT_URL="${SETUP_SCRIPT_URL:-${SCAIL_SETUP_SCRIPT_URL:-}}"
 
 if [ -n "$SCRIPT_URL" ]; then
   echo "Downloading setup script from: $SCRIPT_URL"
-  curl -L --fail --retry 5 --retry-delay 5 \
+  curl -L --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 5 \
+    --connect-timeout 30 --speed-limit 1024 --speed-time 15 \
     -o /tmp/scail2video_setup.sh "$SCRIPT_URL"
   chmod +x /tmp/scail2video_setup.sh
 
