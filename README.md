@@ -1,11 +1,18 @@
-# RunPod ComfyUI SCAIL Wrapper
+# Shared RunPod ComfyUI SCAIL/WAN Wrapper
 
-This is a tiny wrapper image based on `runpod/comfyui:cuda12.8`.
+This wrapper image is based on `runpod/comfyui:cuda12.8`. Despite the legacy
+repository name, it is the common Docker runtime for the SCAIL and WAN 2.2
+RunPod templates.
 
 It replaces the container ENTRYPOINT so a setup script can run before the original RunPod ComfyUI `/start.sh`.
 
-The SageAttention images also bake the tested Pixaroma custom node at commit
-`2b3f90645906b556e0bb466ffd8005ca33a06dd0`.
+The SageAttention images bake the pinned union of custom nodes and Python
+requirements used by both templates. Runtime setup scripts preserve these
+installations and act as fallbacks for older images. Model files remain runtime
+downloads and are not included in the image.
+
+See [TEMPLATE_SHARING.md](TEMPLATE_SHARING.md) before changing the shared image,
+node pins or base-image digest.
 
 ## RunPod environment variables
 
@@ -16,6 +23,8 @@ Set these in your RunPod template:
 - `FILEBROWSER_PASSWORD` = at least 12 characters
 - `JUPYTER_PASSWORD` = your Jupyter password/token
 - `HF_TOKEN` = optional, only needed for gated/private Hugging Face files
+- `SCAIL_DOWNLOAD_JOBS` = optional SCAIL transfer concurrency, defaults to `2`
+- `WAN22_DOWNLOAD_JOBS` = optional WAN transfer concurrency, defaults to `2`
 
 ## RunPod template
 

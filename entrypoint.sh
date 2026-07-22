@@ -12,10 +12,10 @@ if [ -n "$SCRIPT_URL" ]; then
     -o /tmp/scail2video_setup.sh "$SCRIPT_URL"
   chmod +x /tmp/scail2video_setup.sh
 
-  echo "Running Gist setup script..."
+  echo "Running template setup script..."
   bash /tmp/scail2video_setup.sh
 else
-  echo "No setup script URL set, skipping Gist setup."
+  echo "No setup script URL set, skipping template setup."
 fi
 
 echo "Running SageAttention bootstrap..."
